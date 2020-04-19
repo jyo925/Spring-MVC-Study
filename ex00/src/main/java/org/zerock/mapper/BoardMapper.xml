@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.BoardMapper">
+
+
+	<select id="getListWithPaging"
+		resultType="org.zerock.domain.BoardVO">
+  <![CDATA[ SELECT * FROM tbboard 
+   ]]>
+		<trim prefix="where" prefixOverrides="OR">
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%' #{keyword} '%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%' #{keyword} '%'
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%' #{keyword} '%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim> 
+ <![CDATA[  
+  order by bno desc limit #{dbPageNum}, #{amount}
+  ]]>
+	</select>
+
+
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from tbboard
+		<trim prefix="where" prefixOverrides="OR">
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%' #{keyword} '%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%' #{keyword} '%'
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%' #{keyword} '%'
+						</when>
+						<when test="type == ''">
+							bno>0
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+		<!-- <if test="type!=null"> and bno>0 </if> -->
+		<!-- <if test="type.equals('')==true"> where bno>0 </if> -->
+	</select>
+
+	<insert id="insert">
+		insert into tbboard(title, content, writer)
+		values (#{title}, #{content}, #{writer})
+	</insert>
+
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="bno" order="BEFORE" resultType="int">
+		select ifnull(max(bno), 0)+1 from tbboard as seq
+		</selectKey>
+		insert into tbboard (bno, title, content, writer) 
+		values(#{bno},#{title},#{content},#{writer})
+	</insert>
+
+	<update id="update">update tbboard set 
+		title =#{title},
+		content=#{content}, 
+		writer=#{writer}, 
+		updatedate=now() 
+		where bno=#{bno}
+	</update>
+
+	<delete id="delete">delete from tbboard where bno=#{bno}</delete>
+</mapper>
+
+  
