@@ -65,6 +65,7 @@ public class BoardController {
 	public void get(@RequestParam("bno") int bno, @ModelAttribute("cri")Criteria cri, Model model) {
 		
 		log.info("/get or modify");
+		log.info(service.get(bno));
 		model.addAttribute("board", service.get(bno));
 	}
 	
@@ -78,9 +79,14 @@ public class BoardController {
 			rttr.addFlashAttribute("result", "success");
 		}
 		
+		log.info("===============오류찾기 1 =================");
 		rttr.addAttribute("pageNum", cri.getPageNum());
 		rttr.addAttribute("amount", cri.getAmount());
+		rttr.addAttribute("type", cri.getType());
+		rttr.addAttribute("keyword", cri.getKeyword());
 		
+		log.info("===============오류찾기 2 =================");
+		log.info("cri:            "+cri);
 		return "redirect:/board/list";
 	}
 	
@@ -95,6 +101,8 @@ public class BoardController {
 		
 		rttr.addAttribute("pageNum", cri.getPageNum());
 		rttr.addAttribute("amount", cri.getAmount());
+		rttr.addAttribute("type", cri.getType());
+		rttr.addAttribute("keyword", cri.getKeyword());
 		return "redirect:/board/list";
 	}
 }

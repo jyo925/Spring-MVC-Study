@@ -5,7 +5,6 @@
 
 <mapper namespace="org.zerock.mapper.BoardMapper">
 
-
 	<select id="getListWithPaging"
 		resultType="org.zerock.domain.BoardVO">
   <![CDATA[ SELECT * FROM tbboard 
@@ -67,7 +66,8 @@
 
 	<insert id="insertSelectKey">
 		<selectKey keyProperty="bno" order="BEFORE" resultType="int">
-		select ifnull(max(bno), 0)+1 from tbboard as seq
+		select ifnull(max(bno), 0)+1 
+		from tbboard as seq
 		</selectKey>
 		insert into tbboard (bno, title, content, writer) 
 		values(#{bno},#{title},#{content},#{writer})
@@ -81,7 +81,15 @@
 		where bno=#{bno}
 	</update>
 
-	<delete id="delete">delete from tbboard where bno=#{bno}</delete>
+	<delete id="delete">
+	delete from tbboard 
+	where bno=#{bno}
+	</delete>
+	
+	
+	<update id="updateReplyCnt">
+	update tbboard set replycnt = replycnt + #{amount} where bno = #{bno}
+	</update>
 </mapper>
 
   

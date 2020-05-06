@@ -26,8 +26,8 @@
 						value='<c:out value="${cri.pageNum }"/>'> <input
 						type='hidden' name='amount'
 						value='<c:out value="${cri.amount }"/>'>
-					<%--<input type='hidden' name='type' value='<c:out value="${cri.type }"/>'>
-						<input type='hidden' name='keyword' value='<c:out value="${cri.keyword }"/>'>  --%>
+					<input type='hidden' name='type' value='<c:out value="${cri.type }"/>'>
+						<input type='hidden' name='keyword' value='<c:out value="${cri.keyword }"/>'>
 
 					<div class="form-group">
 						<label>bno</label> <input class="form-control" name='bno'
@@ -108,7 +108,8 @@
 				var typeTag = $("input[name='type']").clone();
 
 				formObj.empty();
-
+				
+				//수정화면에서 다시 list 로 가도 검색조건 유지
 				formObj.append(pageNumTag);
 				formObj.append(amountTag);
 				formObj.append(keywordTag);

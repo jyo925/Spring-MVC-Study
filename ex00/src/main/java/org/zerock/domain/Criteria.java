@@ -10,12 +10,12 @@ public class Criteria {
 
 	private int pageNum; // 현재 페이지 번호
 	private int amount; // 보여줄 게시글 개수
-	private int dbPageNum;
+	private int dbPageNum; //게시물 시작번호 , 1페이지면 0부터, 2페이지면 10부터
 
 	private String type;
 	private String keyword;
 
-	// 최초로 목록에 들어왔을 경우를 위해서 기본 셋팅을 하기 위한 생성자
+	//최초로 목록에 들어왔을 경우를 위해서 기본 셋팅을 하기 위한 생성자
 	public Criteria() {
 		this(1, 10);
 		this.dbPageNum = (this.pageNum * 10) - 10;
