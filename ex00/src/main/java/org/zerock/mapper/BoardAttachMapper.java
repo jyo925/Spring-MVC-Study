@@ -18,4 +18,7 @@ public interface BoardAttachMapper {
 	//게시물 삭제시 모든 파일 삭제
 	public void deleteAll(int bno);
 	
+	//어제날짜 첨부파일 목록
+	public List<BoardAttachVO> getOldFiles();
+	
 }

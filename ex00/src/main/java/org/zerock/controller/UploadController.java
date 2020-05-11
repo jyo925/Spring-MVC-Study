@@ -212,7 +212,6 @@ public class UploadController {
 		List<AttachFileDTO> list = new ArrayList<>();
 
 		String uploadFolder = "C:\\upload";
-
 		String uploadFolderPath = getFolder();
 
 		// 폴더 생성
@@ -255,11 +254,8 @@ public class UploadController {
 				if (checkImageType(saveFile)) {
 
 					attachDTO.setImage(true);
-
 					FileOutputStream thumbnail = new FileOutputStream(new File(uploadPath, "s_" + uploadFileName));
-
 					Thumbnailator.createThumbnail(multipartFile.getInputStream(), thumbnail, 100, 100);
-
 					thumbnail.close();
 				}
 

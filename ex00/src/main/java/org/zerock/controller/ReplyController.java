@@ -65,7 +65,7 @@ public class ReplyController {
 		log.info("getList.........");
 		Criteria cri = new Criteria(page, 10);
 		log.info("get reply list bno: "+ bno);
-		log.info("cri " +cri);
+//		log.info("cri " +cri);
 		
 		return new ResponseEntity<>(service.getListPage(cri, bno), HttpStatus.OK);
 	}
@@ -83,7 +83,6 @@ public class ReplyController {
 	public ResponseEntity<String> remove(@PathVariable("rno") int rno) {
 
 		log.info("remove: " + rno);
-
 		return service.remove(rno) == 1 ? new ResponseEntity<>("success", HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}

@@ -42,7 +42,6 @@ public class BoardController {
 		}
 		
 		log.info("delete attach files....................");
-		log.info(attachList);
 		
 		attachList.forEach(attach -> {
 			
@@ -89,7 +88,7 @@ public class BoardController {
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
 		
-		log.info("registerController: " + board);
+		log.info("registerController......................... " + board);
 		//첨부파일 로그
 //		if(board.getAttachList() != null) {
 //			board.getAttachList().forEach(attach-> log.info(attach));
@@ -105,7 +104,7 @@ public class BoardController {
 	public void get(@RequestParam("bno") int bno, @ModelAttribute("cri")Criteria cri, Model model) {
 		
 		log.info("/get or modify");
-		log.info(service.get(bno));
+//		log.info(service.get(bno));
 		model.addAttribute("board", service.get(bno));
 	}
 	
@@ -119,14 +118,12 @@ public class BoardController {
 			rttr.addFlashAttribute("result", "success");
 		}
 		
-		log.info("===============오류찾기 1 =================");
 		rttr.addAttribute("pageNum", cri.getPageNum());
 		rttr.addAttribute("amount", cri.getAmount());
 		rttr.addAttribute("type", cri.getType());
 		rttr.addAttribute("keyword", cri.getKeyword());
 		
-		log.info("===============오류찾기 2 =================");
-		log.info("cri:            "+cri);
+//		log.info("cri:            "+cri);
 		return "redirect:/board/list";
 	}
 	
@@ -141,7 +138,6 @@ public class BoardController {
 			
 			//파일 삭제
 			deleteFiles(attachList);
-			
 			rttr.addFlashAttribute("result", "success");
 		}
 		
@@ -158,7 +154,6 @@ public class BoardController {
 	public ResponseEntity<List<BoardAttachVO>> getAttachList(int bno){
 		
 		log.info("getAttachListController" + bno);
-		
 		return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
 	}
 	

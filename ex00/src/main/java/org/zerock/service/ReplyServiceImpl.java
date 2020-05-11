@@ -39,7 +39,7 @@ public class ReplyServiceImpl implements ReplyService {
 		log.info("get......."+ rno);
 		return mapper.read(rno);
 	}
-
+	
 	@Override
 	public int modify(ReplyVO vo) {
 		log.info("modify......." + vo);
