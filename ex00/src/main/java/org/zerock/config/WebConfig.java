@@ -3,15 +3,18 @@ package org.zerock.config;
 import javax.servlet.Filter;
 import javax.servlet.ServletRegistration;
 
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
 
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
 	
 	
 	@Override
 	protected Class<?>[] getRootConfigClasses() { /* root-context.xml 을 대신하는 클래스를 지정하는 메소드*/
-		return new Class[] {RootConfig.class};
+		return new Class[] {RootConfig.class, SecurityConfig.class};
 	}
 
 	@Override
