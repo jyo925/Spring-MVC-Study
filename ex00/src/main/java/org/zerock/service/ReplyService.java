@@ -2,6 +2,7 @@ package org.zerock.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.zerock.domain.Criteria;
 import org.zerock.domain.ReplyPageDTO;
 import org.zerock.domain.ReplyVO;
@@ -12,6 +13,7 @@ public interface ReplyService {
 	
 	public ReplyVO get(int rno);
 	
+//	@PreAuthorize("authentication.principal.username == #vo.replyer")
 	public int modify(ReplyVO vo);
 	
 	public int remove(int rno);

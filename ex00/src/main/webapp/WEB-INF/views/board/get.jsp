@@ -84,7 +84,7 @@
 <style>
 .uploadResult {
 	width: 100%;
-	background-color: gray;
+	/* background-color: gray; */
 }
 
 .uploadResult ul {
@@ -165,8 +165,10 @@
 
 			<div class="panel-heading">
 				<i class="fa fa-comments fa-fw"></i> Reply
-				<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>New
-					Reply</button>
+				<sec:authorize access="isAuthenticated()">
+					<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>
+						New Reply</button>
+				</sec:authorize>
 			</div>
 
 			<!-- /.panel-heading -->
@@ -463,7 +465,7 @@
 							showList(pageNum); //댓글 목록 불러오기 
 						});
 
-						//모달 관련 동작 처리 -----------------------------------------
+						//댓글 모달 관련 동작 처리 -----------------------------------------
 						var modal = $(".modal");
 						var modalInputReply = modal.find("input[name='reply']");
 						var modalInputReplyer = modal
@@ -474,6 +476,18 @@
 						var modalModBtn = $("#modalModBtn");
 						var modalRemoveBtn = $("#modalRemoveBtn");
 						var modalRegisterBtn = $("#modalRegisterBtn");
+						
+						var replyer = null;
+						
+						//username을 replyer에 넣기
+						<sec:authorize access="isAuthenticated()">
+						replyer = '<sec:authentication property="principal.username"/>';
+						</sec:authorize>
+						
+						//토큰 추가
+						var csrfHeaderName = "${_csrf.headerName}";
+						var csrfTokenValue = "${_csrf.token}";
+						
 
 						$("#modalCloseBtn").on("click", function(e) {
 
@@ -485,6 +499,7 @@
 						$("#addReplyBtn").on("click", function(e) {
 
 							modal.find("input").val("");
+							modal.find("input[name='replyer']").val(replyer);
 							modalInputReplyDate.closest("div").hide();
 							modal.find("button[id !='modalCloseBtn']").hide();
 
@@ -493,6 +508,13 @@
 							$(".modal").modal("show");
 
 						});
+						
+						//모든 Ajax 전송시 토큰을 같이 전송하도록
+						//beforeSend 안써도 됨
+						//replyService에 ajax 함수들 때문에 사용
+						$(document).ajaxSend(function(e, xhr, options) { 
+						    xhr.setRequestHeader(csrfHeaderName, csrfTokenValue); 
+						}); 
 
 						modalRegisterBtn.on("click", function(e) {
 							//reply는 json으로 변경해서 요청시 보낼거임
@@ -533,7 +555,12 @@
 																modalInputReply
 																		.val(reply.reply);
 																modalInputReplyer
-																		.val(reply.replyer);
+																		.val(reply.replyer)
+																		.attr(
+																				"readonly",
+																				"readonly");
+																//new reply하면 모달에서 replydate 사라져버리기 때문에 아래 코드 추가
+																modalInputReplyDate.closest("div").show();
 																modalInputReplyDate
 																		.val(
 																				replyService
@@ -563,35 +590,76 @@
 
 						//수정하기
 						modalModBtn.on("click", function(e) {
+							
+							var originalReplyer = modalInputReplyer.val();
 
 							var reply = {
 								rno : modal.data("rno"),
-								reply : modalInputReply.val()
+								reply : modalInputReply.val(),
+								replyer : originalReplyer
 							};
-
+							
+							if(!replyer){
+								alert("로그인 후 수정이 가능합니다.");
+								modal.modal("hide");
+								return;
+							}
+							
+							console.log("Original Replyer: "+ originalReplyer);
+							
+/* 							if(replyer != originalReplyer){
+								alert("자신이 작성한 댓글만 수정 가능합니다.");
+								modal.modal("hide");
+								return;
+							} */
+							
+							
 							replyService.update(reply, function(result) {
 
 								alert(result);
 								modal.modal("hide");
-								showList(1);
+								showList(pageNum);
 
 							});
 
 						});
 
 						//삭제하기
-						modalRemoveBtn.on("click", function(e) {
+						//replyer 정보도 넘기기
 
-							var rno = modal.data("rno");
+						modalRemoveBtn.on("click", function (e){
+						   	  
+						   	  var rno = modal.data("rno");
 
-							replyService.remove(rno, function(result) {
-
-								alert(result);
-								modal.modal("hide");
-								showList(1);
-							});
-
-						});
+						   	  console.log("RNO: " + rno);
+						   	  console.log("REPLYER: " + replyer);
+						   	  
+						   	  if(!replyer){
+						   		  alert("로그인후 삭제가 가능합니다.");
+						   		  modal.modal("hide");
+						   		  return;
+						   	  }
+						   	  
+						   	  var originalReplyer = modalInputReplyer.val();
+						   	  
+						   	  console.log("Original Replyer: " + originalReplyer); //댓글 작성자 replyer는 로그인한 사람이름
+						   	  
+						   	  if(replyer  != originalReplyer){
+						   		  
+						   		  alert("자신이 작성한 댓글만 삭제가 가능합니다.");
+						   		  modal.modal("hide");
+						   		  return;
+						   		  
+						   	  }
+						   	  
+						   	  replyService.remove(rno, originalReplyer, function(result){
+						   	      alert(result);
+						   	      modal.modal("hide");
+						   	      showList(pageNum);
+						   	      
+						   	  });
+						   	  
+						   	});
 
 					});
 </script>

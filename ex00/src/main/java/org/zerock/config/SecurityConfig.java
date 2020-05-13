@@ -25,17 +25,17 @@ import lombok.extern.log4j.Log4j;
 
 @Configuration
 @EnableWebSecurity // @EnableWebSecurity 는 스프링 MVC와 스프링 시큐리티를 결합
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, proxyTargetClass = true)
 @Log4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DataSource dataSource;
-	
-	/*
-	 * @Bean public AuthenticationSuccessHandler loginSuccessHandler() { return new
-	 * CustomLoginSuccessHandler(); }
-	 */
+
+	@Bean
+	public AuthenticationSuccessHandler loginSuccessHandler() {
+		return new CustomLoginSuccessHandler();
+	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -65,17 +65,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests().antMatchers("/sample/all").permitAll().antMatchers("/sample/admin")
 				.access("hasRole('ROLE_ADMIN')").antMatchers("/sample/member").access("hasRole('ROLE_MEMBER')")
-				.antMatchers("/board/register").authenticated();
+				.antMatchers("/board/register").authenticated().antMatchers("/deleteFile").authenticated()
+				.antMatchers("/uploadAjaxAction").authenticated().antMatchers("/replies/new").authenticated();
+//		.antMatchers("/board/list").authenticated();
 //				.anyRequest().authenticated()
-	/*			.antMatchers("/board/register").access("hasRole('ROLE_MEMBER')")
-				.antMatchers("/board/register").access("hasRole('ROLE_ADMIN')");*/
-
 		/*
-		 * http.formLogin() .loginPage("/customLogin") .loginProcessingUrl("/login")
-		 * .successHandler(loginSuccessHandler());
+		 * .antMatchers("/board/register").access("hasRole('ROLE_MEMBER')")
+		 * .antMatchers("/board/register").access("hasRole('ROLE_ADMIN')");
 		 */
 
-		http.formLogin().loginPage("/customLogin").loginProcessingUrl("/login");
+		http.formLogin().loginPage("/customLogin").loginProcessingUrl("/login").successHandler(loginSuccessHandler());
+
+//		http.formLogin().loginPage("/customLogin").loginProcessingUrl("/login");
 
 		http.logout().logoutUrl("/customLogout").invalidateHttpSession(true).deleteCookies("remember-me",
 				"JSESSION_ID");

@@ -23,18 +23,18 @@ var replyService = (function() {
 			}
 		});
 	}
-	
+
 	// 댓글 목록 처리
 	function getList(param, callback, error) {
-		
+
 		var bno = param.bno;
 		var page = param.page || 1;
-		$.getJSON("/replies/pages/"+ bno +"/"+ page +".json",
+		$.getJSON("/replies/pages/" + bno + "/" + page + ".json",
 				function(data) {
 					if (callback) {
 						console.log("reply의 데이터");
 						console.log(data);
-						//callback(data); // 댓글 목록만 가져오는 경우
+						// callback(data); // 댓글 목록만 가져오는 경우
 						callback(data.replyCnt, data.list); // 댓글 숫자와 목록을 가져오는
 					}
 				}).fail(function(xhr, status, err) {
@@ -46,10 +46,19 @@ var replyService = (function() {
 	}
 
 	// 댓글 삭제
-	function remove(rno, callback, error) {
+	function remove(rno, replyer, callback, error) {
+
+		console.log("--------------------------------------");
+		console.log(JSON.stringify({
+			rno : rno,
+			replyer : replyer
+		}));
+
 		$.ajax({
 			type : 'delete',
 			url : '/replies/' + rno,
+			contentType : "application/json; charset=utf-8",
+			data : JSON.stringify({rno : rno, replyer : replyer}),
 			success : function(deleteResult, status, xhr) {
 				if (callback) {
 					callback(deleteResult);
@@ -78,6 +87,7 @@ var replyService = (function() {
 			},
 			error : function(xhr, status, er) {
 				if (error) {
+					console.log("작성자만 수정가능합니다.");
 					error(er);
 				}
 			}
@@ -107,8 +117,8 @@ var replyService = (function() {
 
 		var gap = today.getTime() - timeValue;
 
-		var dateObj = new Date(timeValue+(900 * 60 * 1000));
-		
+		var dateObj = new Date(timeValue + (900 * 60 * 1000));
+
 		var str = "";
 
 		if (gap < (1000 * 60 * 60 * 24)) {

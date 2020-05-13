@@ -198,6 +198,10 @@
 							return true;
 						}
 						
+						//토큰 추가
+						var csrfHeaderName = "${_csrf.headerName}";
+						var csrfTokenValue = "${_csrf.token}";
+						
 						
 						$("input[type='file']")
 								.change(
@@ -225,6 +229,10 @@
 												url : '/uploadAjaxAction',
 												processData : false,
 												contentType : false,
+												beforeSend:function(xhr){
+													xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+													console.log(xhr);
+												},
 												data : formData,
 												type : 'POST',
 												dataType : 'json',
@@ -317,7 +325,8 @@
 
 							uploadUL.append(str);
 						}
-
+						
+						//첨부파일 삭제
 						$(".uploadResult").on("click", "button", function(e) {
 
 							console.log("delete file");
@@ -332,6 +341,9 @@
 								data : {
 									fileName : targetFile,
 									type : type
+								},
+								beforeSend:function(xhr){
+									xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
 								},
 								dataType : 'text',
 								type : 'POST',

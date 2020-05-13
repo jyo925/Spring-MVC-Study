@@ -67,7 +67,7 @@ public class BoardController {
 	}
 	
 	
-	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/list")
 	public void list(Criteria cri, Model model) {
 		 
@@ -114,6 +114,7 @@ public class BoardController {
 	}
 	
 	
+	@PreAuthorize("principal.username == #board.writer")
 	@PostMapping("/modify")
 	public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
 		
@@ -132,8 +133,9 @@ public class BoardController {
 		return "redirect:/board/list";
 	}
 	
+	@PreAuthorize("principal.username == #wirter")
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno") int bno, Criteria cri, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno") int bno, Criteria cri, RedirectAttributes rttr, String writer) {
 		
 		log.info("remove: "+ bno);
 		
